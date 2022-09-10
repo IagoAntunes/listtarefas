@@ -15,6 +15,8 @@ class ToDoListPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
+              onChanged: onChanged,
+              onSubmitted: onSubmitted,
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'E-mail',
@@ -29,6 +31,12 @@ class ToDoListPage extends StatelessWidget {
 
   void login() {
     String text = emailController.text;
+    print(text);
+  }
+
+  void onChanged(String text) {}
+
+  void onSubmitted(String text) {
     print(text);
   }
 }
