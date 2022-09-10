@@ -21,7 +21,16 @@ class ToDoListPage extends StatelessWidget {
             const SizedBox(
               width: 8,
             ),
-            ElevatedButton(onPressed: () {}, child: Text("+"))
+            ElevatedButton(
+              onPressed: () {},
+              child: Icon(
+                Icons.add,
+                size: 30,
+              ),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xff00d7f3),
+                  padding: EdgeInsets.all(20)),
+            )
           ],
         ),
       )),
