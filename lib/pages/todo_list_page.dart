@@ -42,20 +42,11 @@ class ToDoListPage extends StatelessWidget {
             ListView(
               shrinkWrap: true,
               children: [
-                Container(
-                  color: Colors.red,
-                  width: 50,
-                  height: 50,
-                ),
-                Container(
-                  color: Colors.yellow,
-                  width: 50,
-                  height: 50,
-                ),
-                Container(
-                  color: Colors.red,
-                  width: 50,
-                  height: 50,
+                ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text('Tarefa 1'),
+                  subtitle: Text('01/02/2000'),
+                  onTap: () {},
                 )
               ],
             ),
