@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
-class ToDoListPage extends StatelessWidget {
+import '../Widgets/todo_list_item.dart';
+
+class ToDoListPage extends StatefulWidget {
   ToDoListPage({super.key});
+
+  @override
+  State<ToDoListPage> createState() => _ToDoListPageState();
+}
+
+class _ToDoListPageState extends State<ToDoListPage> {
+  List<String> todos = [];
+
+  TextEditingController todoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +25,9 @@ class ToDoListPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: TextField(
+                    controller: todoController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: "Adicione uma tarefa"),
@@ -25,7 +37,13 @@ class ToDoListPage extends StatelessWidget {
                   width: 8,
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    String text = todoController.text;
+                    setState(() {
+                      todos.add(text);
+                    });
+                    todoController.clear();
+                  },
                   child: Icon(
                     Icons.add,
                     size: 30,
@@ -39,23 +57,22 @@ class ToDoListPage extends StatelessWidget {
             const SizedBox(
               height: 30,
             ),
-            ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text('Tarefa 1'),
-                  subtitle: Text('01/02/2000'),
-                  onTap: () {},
-                )
-              ],
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (String todo in todos) TodoListItem(),
+                ],
+              ),
             ),
             const SizedBox(
               height: 30,
             ),
             Row(
               children: [
-                const Expanded(child: Text("Você possui 0 tarefas pendentes")),
+                Expanded(
+                    child:
+                        Text("Você possui ${todos.length} tarefas pendentes")),
                 const SizedBox(width: 8),
                 ElevatedButton(
                     onPressed: () {},
