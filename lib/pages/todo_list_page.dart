@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Widgets/todo_list_item.dart';
+import '../models/todo.dart';
 
 class ToDoListPage extends StatefulWidget {
   ToDoListPage({super.key});
@@ -10,7 +11,7 @@ class ToDoListPage extends StatefulWidget {
 }
 
 class _ToDoListPageState extends State<ToDoListPage> {
-  List<String> todos = [];
+  List<Todo> todos = [];
 
   TextEditingController todoController = TextEditingController();
 
@@ -29,7 +30,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                   Expanded(
                     child: TextField(
                       controller: todoController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Adicione uma tarefa"),
                     ),
@@ -41,17 +42,19 @@ class _ToDoListPageState extends State<ToDoListPage> {
                     onPressed: () {
                       String text = todoController.text;
                       setState(() {
-                        todos.add(text);
+                        Todo newTodo =
+                            Todo(title: text, dateTime: DateTime.now());
+                        todos.add(newTodo);
                       });
                       todoController.clear();
                     },
-                    child: Icon(
-                      Icons.add,
-                      size: 30,
-                    ),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff00d7f3),
                         padding: const EdgeInsets.all(20)),
+                    child: const Icon(
+                      Icons.add,
+                      size: 30,
+                    ),
                   )
                 ],
               ),
@@ -62,7 +65,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                 child: ListView(
                   shrinkWrap: true,
                   children: [
-                    for (String todo in todos) TodoListItem(title: todo),
+                    for (Todo todo in todos) TodoListItem(todo: todo),
                   ],
                 ),
               ),
@@ -77,10 +80,10 @@ class _ToDoListPageState extends State<ToDoListPage> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                       onPressed: () {},
-                      child: Text("Limpar Tudo"),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff00d7f3),
-                          padding: const EdgeInsets.all(20)))
+                          padding: const EdgeInsets.all(20)),
+                      child: const Text("Limpar Tudo"))
                 ],
               )
             ],
