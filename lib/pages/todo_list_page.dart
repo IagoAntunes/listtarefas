@@ -12,13 +12,69 @@ class ToDoListPage extends StatefulWidget {
 
 class _ToDoListPageState extends State<ToDoListPage> {
   List<Todo> todos = [];
+  Todo? deletedTodo;
+  int? deletedTodoPos;
 
   TextEditingController todoController = TextEditingController();
 
   void onDelete(Todo todo) {
+    deletedTodo = todo;
+    deletedTodoPos = todos.indexOf(todo);
     setState(() {
       todos.remove(todo);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Tarefa ${todo.title} foi removida com sucesso',
+        style: const TextStyle(color: Colors.black),
+      ),
+      backgroundColor: Colors.white,
+      duration: const Duration(seconds: 5),
+      action: SnackBarAction(
+        label: 'Desfazer',
+        textColor: Colors.lightBlue,
+        onPressed: () {
+          setState(() {
+            todos.insert(deletedTodoPos!, deletedTodo!);
+          });
+        },
+      ),
+    ));
+  }
+
+  void deleteAllTodos() {
+    setState(() {
+      todos.clear();
+    });
+  }
+
+  void ShowDeleteTodosConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Limpar Tudo?'),
+        content:
+            const Text('Voce tem certeza que deseja apagar todas as tarefas ?'),
+        actions: [
+          TextButton(
+              onPressed: () => {Navigator.of(context).pop()},
+              style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xff00d7f3)),
+              child: const Text('Cancelar')),
+          TextButton(
+              onPressed: () {
+                setState(() {
+                  todos.clear();
+                });
+                Navigator.of(context).pop();
+                ;
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Limpar Tudo'))
+        ],
+      ),
+    );
   }
 
   @override
@@ -86,7 +142,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                           "Você possui ${todos.length} tarefas pendentes")),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                      onPressed: () {},
+                      onPressed: ShowDeleteTodosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff00d7f3),
                           padding: const EdgeInsets.all(20)),
