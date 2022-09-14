@@ -14,9 +14,17 @@ class TodoRepository {
 
   Future<List<Todo>> getToDoList() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    final String jsonString = sharedPreferences.getString(todoListKey) ?? '[]';
-    final List jsonDecoder = json.decode(jsonString) as List;
-    return jsonDecoder.map((e) => Todo.fromJson(e)).toList();
+    final String jsonString = sharedPreferences.getString(todoListKey) ?? '';
+    if (jsonString.isNotEmpty) {
+      final List jsonDecoder = json.decode(jsonString) as List;
+      return jsonDecoder.map((e) => Todo.fromJson(e)).toList();
+    }
+    return [];
+  }
+
+  clearList() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.clear();
   }
 
   void saveToDoList(List<Todo> todos) {

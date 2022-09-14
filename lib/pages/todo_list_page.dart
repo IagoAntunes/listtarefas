@@ -15,8 +15,9 @@ class _ToDoListPageState extends State<ToDoListPage> {
   List<Todo> todos = [];
   Todo? deletedTodo;
   int? deletedTodoPos;
+  String? errortext;
 
-  TextEditingController todoController = TextEditingController();
+  final TextEditingController todoController = TextEditingController();
   final TodoRepository todoRepository = TodoRepository();
 
   void onDelete(Todo todo) {
@@ -85,6 +86,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
   void initState() {
     super.initState();
     todoRepository.getToDoList().then((value) {
+      print(value);
       setState(() {
         todos = value;
       });
@@ -106,9 +108,13 @@ class _ToDoListPageState extends State<ToDoListPage> {
                   Expanded(
                     child: TextField(
                       controller: todoController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: "Adicione uma tarefa"),
+                          hintText: "Adicione uma tarefa",
+                          errorText: errortext,
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0xff00b7f3), width: 2))),
                     ),
                   ),
                   const SizedBox(
@@ -125,6 +131,13 @@ class _ToDoListPageState extends State<ToDoListPage> {
                           todoRepository.saveToDoList(todos);
                         });
                         todoController.clear();
+                        setState(() {
+                          errortext = null;
+                        });
+                      } else {
+                        setState(() {
+                          errortext = 'O titulo não pode ser vazio!';
+                        });
                       }
                     },
                     style: ElevatedButton.styleFrom(
