@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:listtarefas/repositories/todo_repository.dart';
 
 import '../Widgets/todo_list_item.dart';
 import '../models/todo.dart';
@@ -16,6 +17,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
   int? deletedTodoPos;
 
   TextEditingController todoController = TextEditingController();
+  final TodoRepository todoRepository = TodoRepository();
 
   void onDelete(Todo todo) {
     deletedTodo = todo;
@@ -23,6 +25,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
     setState(() {
       todos.remove(todo);
     });
+    todoRepository.saveToDoList(todos);
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
@@ -37,6 +40,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
         onPressed: () {
           setState(() {
             todos.insert(deletedTodoPos!, deletedTodo!);
+            todoRepository.saveToDoList(todos);
           });
         },
       ),
@@ -47,9 +51,10 @@ class _ToDoListPageState extends State<ToDoListPage> {
     setState(() {
       todos.clear();
     });
+    todoRepository.saveToDoList(todos);
   }
 
-  void ShowDeleteTodosConfirmationDialog() {
+  void showDeleteTodosConfirmationDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -68,13 +73,22 @@ class _ToDoListPageState extends State<ToDoListPage> {
                   todos.clear();
                 });
                 Navigator.of(context).pop();
-                ;
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Limpar Tudo'))
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    todoRepository.getToDoList().then((value) {
+      setState(() {
+        todos = value;
+      });
+    });
   }
 
   @override
@@ -102,13 +116,16 @@ class _ToDoListPageState extends State<ToDoListPage> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      String text = todoController.text;
-                      setState(() {
-                        Todo newTodo =
-                            Todo(title: text, dateTime: DateTime.now());
-                        todos.add(newTodo);
-                      });
-                      todoController.clear();
+                      if (todoController.text.isNotEmpty) {
+                        String text = todoController.text;
+                        setState(() {
+                          Todo newTodo =
+                              Todo(title: text, dateTime: DateTime.now());
+                          todos.add(newTodo);
+                          todoRepository.saveToDoList(todos);
+                        });
+                        todoController.clear();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff00d7f3),
@@ -142,7 +159,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                           "Você possui ${todos.length} tarefas pendentes")),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                      onPressed: ShowDeleteTodosConfirmationDialog,
+                      onPressed: showDeleteTodosConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff00d7f3),
                           padding: const EdgeInsets.all(20)),
